@@ -1,16 +1,28 @@
 package ru.stdrone.home.readtechnics.books;
 
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.database.DataSetObserver;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class BooksList extends ArrayList<Book> {
+class BookList extends ArrayList<Book> {
 
+    static final String BOOKS_PREFERENES = "bookList";
     private final String BOOKS_LIST_ASSETS_PATH = "books";
 
-    public BooksList(AssetManager assetManager) {
+    BookList(AssetManager assetManager, SharedPreferences preferences) {
         super();
+        InitFromAssets(assetManager);
+        InitFromPreferences(preferences);
+    }
+
+    void SavePreferences(SharedPreferences preferences) {
+        // TODO: implement
+    }
+
+    private void InitFromAssets(AssetManager assetManager) {
         String[] list = new String[0];
         try {
             list = assetManager.list(BOOKS_LIST_ASSETS_PATH);
@@ -26,4 +38,7 @@ public class BooksList extends ArrayList<Book> {
         }
     }
 
+    private void InitFromPreferences(SharedPreferences preferences) {
+        // TODO:
+    }
 }

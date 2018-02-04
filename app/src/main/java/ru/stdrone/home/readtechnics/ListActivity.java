@@ -7,13 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import ru.stdrone.home.readtechnics.books.Book;
-import ru.stdrone.home.readtechnics.books.BooksList;
+import ru.stdrone.home.readtechnics.books.BookListAdapter;
 
 public class ListActivity extends AppCompatActivity {
+
+    BookListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,14 +25,16 @@ public class ListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ListView lvBooks = findViewById(R.id.list_of_books);
-        BooksList list = new BooksList(this.getAssets());
-        lvBooks.setAdapter(new ArrayAdapter<>(this, R.layout.book_list_item, R.id.book_list_item_name, list));
+
+        adapter = new BookListAdapter(this, R.layout.book_list_item);
+        lvBooks.setAdapter(adapter);
 
         lvBooks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // TODO: implement
-                Book book = (Book) parent.getAdapter().getItem(position);
+                BookListAdapter adapter = (BookListAdapter) parent.getAdapter();
+                Book book = (Book) adapter.getItem(position);
                 Snackbar.make(view, "Clicked " + book.getName(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -42,6 +45,7 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO: implement
+                adapter.SaveList();
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

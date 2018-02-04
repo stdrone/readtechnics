@@ -37,11 +37,6 @@ public class Book {
         return name;
     }
 
-    @Override
-    public String toString() {
-        return getName();
-    }
-
     public InputStream getStream() throws IOException {
         switch (storeType) {
             case RESOURCE:
