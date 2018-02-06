@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Техника чтения</string>
     <string name="action_settings">Настройки</string>
+    <string name="edit_name">Наименование</string>
+    <string name="edit_file">Выберите файл…</string>
+    <string name="edit_header">Добавление книги</string>
+    <string name="edit_button">Добавить</string>
 </resources>
