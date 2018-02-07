@@ -13,8 +13,8 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 
 public class Book implements Serializable {
-    private static final String EXTRA_NAME = "name";
-    private static final String EXTRA_URI = "uri";
+    public static final String EXTRA_NAME = "name";
+    public static final String EXTRA_URI = "uri";
 
     private StoreType storeType;
     private String name;
@@ -50,7 +50,12 @@ public class Book implements Serializable {
         return name;
     }
 
-    public InputStream getStream() throws IOException {
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    InputStream getStream() throws IOException {
         switch (storeType) {
             case RESOURCE:
                 return mAssetManager.open(mAssetPath);

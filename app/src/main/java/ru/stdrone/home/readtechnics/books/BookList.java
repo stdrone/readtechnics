@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class BookList {
 
@@ -24,25 +25,22 @@ public class BookList {
     static public void SaveList(SharedPreferences preferences, ArrayList arrayList) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(BOOK_LIST, Serialize(arrayList));
-        editor.commit();
+        editor.apply();
     }
 
     static public ArrayList<Book> RestoreList(AssetManager assetManager, Bundle intent, SharedPreferences preferences) {
-        Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<Book>>() {
-        }.getType();
-        if (intent.containsKey(BOOK_LIST)) {
-            return gson.fromJson(intent.getString(BOOK_LIST), type);
+        if (intent != null && intent.containsKey(BOOK_LIST)) {
+            return Deserialize(intent.getString(BOOK_LIST));
         } else if (preferences.contains(BOOK_LIST)) {
-            return gson.fromJson(preferences.getString(BOOK_LIST, ""), type);
+            return Deserialize(preferences.getString(BOOK_LIST, ""));
         } else {
             return InitList(assetManager);
         }
     }
 
-    static ArrayList<Book> InitList(AssetManager assetManager) {
+    private static ArrayList<Book> InitList(AssetManager assetManager) {
         String[] list = new String[0];
-        ArrayList<Book> arrayList = new ArrayList<Book>();
+        ArrayList<Book> arrayList = new ArrayList<>();
         try {
             list = assetManager.list(BOOKS_LIST_ASSETS_PATH);
         } catch (IOException e) {
@@ -55,11 +53,23 @@ public class BookList {
                 e.printStackTrace();
             }
         }
-        return null;
+        return arrayList;
     }
 
-    static String Serialize(ArrayList arrayList) {
+    private static String Serialize(ArrayList arrayList) {
         Gson gson = new Gson();
-        return gson.toJson(arrayList);
+        Object[] list = arrayList.toArray();
+        return gson.toJson(list);
+    }
+
+    private static ArrayList<Book> Deserialize(String data) {
+        ArrayList<Book> list = new ArrayList<>();
+        Gson gson = new Gson();
+        Type type = new TypeToken<Book[]>() {
+        }.getType();
+
+        Collections.addAll(list, (Book[]) gson.fromJson(data, type));
+
+        return list;
     }
 }
