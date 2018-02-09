@@ -31,7 +31,7 @@ public class ListActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mBookList = new BookList(getAssets(), savedInstanceState, getPreferences(MODE_PRIVATE));
+        mBookList = new BookList(getPreferences(MODE_PRIVATE), getResources());
 
         ListView lvBooks = findViewById(R.id.list_of_books);
         ArrayAdapter<Book> adapter;

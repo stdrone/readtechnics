@@ -3,11 +3,13 @@ package ru.stdrone.home.readtechnics.books;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -20,42 +22,42 @@ public class BookList {
 
     private ArrayList<Book> mBookList;
     private SharedPreferences mPreferences;
-    private AssetManager mAssetManager;
+    private Resources mResources;
     private Bundle mBundle;
 
-    public BookList(AssetManager assets, Bundle intent, SharedPreferences preferences) {
-        mAssetManager = assets;
+    public BookList(SharedPreferences preferences, Resources resources) {
+        mResources = resources;
         mPreferences = preferences;
-        mBundle = intent;
     }
 
-    public void SaveList() {
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putString(BOOK_LIST, Serialize(mBookList));
-        editor.apply();
-    }
-
-    private static ArrayList<Book> RestoreList(AssetManager assetManager, Bundle intent, SharedPreferences preferences) {
-        if (intent != null && intent.containsKey(BOOK_LIST)) {
-            return Deserialize(intent.getString(BOOK_LIST));
-        } else if (preferences.contains(BOOK_LIST)) {
+    private static ArrayList<Book> RestoreList(SharedPreferences preferences, Resources resources) {
+        if (preferences.contains(BOOK_LIST)) {
             return Deserialize(preferences.getString(BOOK_LIST, ""));
         } else {
-            return InitList(assetManager);
+            return InitList(resources);
         }
     }
 
-    private static ArrayList<Book> InitList(AssetManager assetManager) {
+    private static ArrayList<Book> InitList(Resources resources) {
         String[] list = new String[0];
+        AssetManager assetManager = resources.getAssets();
+        String locale = resources.getConfiguration().locale.getCountry();
+        String path = "";
         ArrayList<Book> arrayList = new ArrayList<>();
         try {
-            list = assetManager.list(BOOKS_LIST_ASSETS_PATH);
+            path = locale + File.separator + BOOKS_LIST_ASSETS_PATH;
+            list = assetManager.list(path);
         } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                path = BOOKS_LIST_ASSETS_PATH;
+                list = assetManager.list(path);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
         for (String item : list) {
             try {
-                arrayList.add(new Book(assetManager, BOOKS_LIST_ASSETS_PATH + "/" + item));
+                arrayList.add(new Book(assetManager, path + File.separator + item));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -74,13 +76,19 @@ public class BookList {
         return new Gson().fromJson(data, type);
     }
 
+    public void SaveList() {
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putString(BOOK_LIST, Serialize(mBookList));
+        editor.apply();
+    }
+
     public void SaveList(Intent intent, ArrayList arrayList) {
         intent.putExtra(BOOK_LIST, Serialize(arrayList));
     }
 
     public ArrayList<Book> getList() {
         if (mBookList == null) {
-            mBookList = RestoreList(mAssetManager, mBundle, mPreferences);
+            mBookList = RestoreList(mPreferences, mResources);
         }
         return mBookList;
     }
