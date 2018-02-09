@@ -1,5 +1,7 @@
 package ru.stdrone.home.readtechnics.books;
 
+import android.content.Context;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -8,8 +10,8 @@ public class BookText {
     private Book mBook;
     private InputStream mStream;
 
-    BookText(Book book) throws IOException {
+    BookText(Book book, Context context) throws IOException {
         mBook = book;
-        mStream = book.getStream();
+        mStream = book.getStream(context);
     }
 }

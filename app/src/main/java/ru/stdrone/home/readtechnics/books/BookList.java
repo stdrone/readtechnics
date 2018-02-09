@@ -11,24 +11,31 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 public class BookList {
 
     private static final String BOOK_LIST = "BOOK_LIST";
     private static final String BOOKS_LIST_ASSETS_PATH = "books";
 
-    static public void SaveList(Intent intent, ArrayList arrayList) {
-        intent.putExtra(BOOK_LIST, Serialize(arrayList));
+    private ArrayList<Book> mBookList;
+    private SharedPreferences mPreferences;
+    private AssetManager mAssetManager;
+    private Bundle mBundle;
+
+    public BookList(AssetManager assets, Bundle intent, SharedPreferences preferences) {
+        mAssetManager = assets;
+        mPreferences = preferences;
+        mBundle = intent;
     }
 
-    static public void SaveList(SharedPreferences preferences, ArrayList arrayList) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(BOOK_LIST, Serialize(arrayList));
+    public void SaveList() {
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putString(BOOK_LIST, Serialize(mBookList));
         editor.apply();
     }
 
-    static public ArrayList<Book> RestoreList(AssetManager assetManager, Bundle intent, SharedPreferences preferences) {
+    private static ArrayList<Book> RestoreList(AssetManager assetManager, Bundle intent, SharedPreferences preferences) {
         if (intent != null && intent.containsKey(BOOK_LIST)) {
             return Deserialize(intent.getString(BOOK_LIST));
         } else if (preferences.contains(BOOK_LIST)) {
@@ -57,19 +64,24 @@ public class BookList {
     }
 
     private static String Serialize(ArrayList arrayList) {
-        Gson gson = new Gson();
-        Object[] list = arrayList.toArray();
-        return gson.toJson(list);
+        return new Gson().toJson(arrayList);
     }
 
     private static ArrayList<Book> Deserialize(String data) {
-        ArrayList<Book> list = new ArrayList<>();
-        Gson gson = new Gson();
-        Type type = new TypeToken<Book[]>() {
+        Type type = new TypeToken<List<Book>>() {
         }.getType();
 
-        Collections.addAll(list, (Book[]) gson.fromJson(data, type));
+        return new Gson().fromJson(data, type);
+    }
 
-        return list;
+    public void SaveList(Intent intent, ArrayList arrayList) {
+        intent.putExtra(BOOK_LIST, Serialize(arrayList));
+    }
+
+    public ArrayList<Book> getList() {
+        if (mBookList == null) {
+            mBookList = RestoreList(mAssetManager, mBundle, mPreferences);
+        }
+        return mBookList;
     }
 }

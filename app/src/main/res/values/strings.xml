@@ -5,4 +5,7 @@
     <string name="edit_file">Choose file…</string>
     <string name="edit_header">Add book</string>
     <string name="edit_button">Add</string>
+    <array name="list_context_menu">
+        <item>Delete</item>
+    </array>
 </resources>

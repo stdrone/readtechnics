@@ -1,8 +1,10 @@
 package ru.stdrone.home.readtechnics.books;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.net.Uri;
+import android.os.Bundle;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,37 +15,28 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 
 public class Book implements Serializable {
-    public static final String EXTRA_NAME = "name";
-    public static final String EXTRA_URI = "uri";
+    public static final String EXTRA_BOOK = "book";
 
     private StoreType storeType;
     private String name;
-    private Uri mUri;
-
-    private AssetManager mAssetManager;
-    private String mAssetPath;
-
-    public Book(Intent intent) {
-        storeType = StoreType.TEXT_FILE;
-        name = intent.getStringExtra(EXTRA_NAME);
-        mUri = Uri.parse(intent.getStringExtra(EXTRA_URI));
-    }
+    private String mPath;
 
     Book(AssetManager assetManager, String assetPath) throws IOException {
         InputStream stream = assetManager.open(assetPath);
         InputStreamReader isReader = new InputStreamReader(stream);
         BufferedReader reader = new BufferedReader(isReader);
         this.name = reader.readLine();
+        reader.close();
+        stream.close();
 
         this.storeType = StoreType.RESOURCE;
-        this.mAssetPath = assetPath;
-        this.mAssetManager = assetManager;
+        this.mPath = assetPath;
     }
 
-    Book(String name, Uri filePath) {
+    public Book(String name, String filePath) {
         this.storeType = StoreType.TEXT_FILE;
         this.name = name;
-        this.mUri = filePath;
+        this.mPath = filePath;
     }
 
     public String getName() {
@@ -55,12 +48,12 @@ public class Book implements Serializable {
         return getName();
     }
 
-    InputStream getStream() throws IOException {
+    InputStream getStream(Context context) throws IOException {
         switch (storeType) {
             case RESOURCE:
-                return mAssetManager.open(mAssetPath);
+                return context.getAssets().open(mPath);
             case TEXT_FILE:
-                return new FileInputStream(new File(mUri.getPath()));
+                return new FileInputStream(new File(mPath));
         }
         return null;
     }

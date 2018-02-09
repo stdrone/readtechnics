@@ -29,9 +29,9 @@ public class AddBookActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String name = ((EditText) findViewById(R.id.editName)).getText().toString();
                 if (!name.equals("") && mUri != null) {
+                    Book book = new Book(name, mUri.getPath());
                     Intent intent = new Intent();
-                    intent.putExtra(Book.EXTRA_NAME, name);
-                    intent.putExtra(Book.EXTRA_URI, mUri.getPath());
+                    intent.putExtra(Book.EXTRA_BOOK, book);
                     setResult(RESULT_OK, intent);
                     finish();
                 }
