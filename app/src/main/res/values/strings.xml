@@ -1,11 +1,9 @@
 <resources>
-    <string name="app_name">ReadTechnics</string>
+    <string name="app_name">Read Techniques</string>
     <string name="action_settings">Settings</string>
     <string name="edit_name">Name</string>
     <string name="edit_file">Choose file…</string>
     <string name="edit_header">Add book</string>
     <string name="edit_button">Add</string>
-    <array name="list_context_menu">
-        <item>Delete</item>
-    </array>
+    <string name="list_context_menu_delete">Delete</string>
 </resources>

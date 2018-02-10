@@ -5,7 +5,5 @@
     <string name="edit_file">Выберите файл…</string>
     <string name="edit_header">Добавление книги</string>
     <string name="edit_button">Добавить</string>
-    <array name="list_context_menu">
-        <item>Удалить</item>
-    </array>
+    <string name="list_context_menu_delete">Удалить</string>
 </resources>

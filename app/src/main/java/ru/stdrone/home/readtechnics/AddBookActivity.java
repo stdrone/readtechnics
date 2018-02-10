@@ -58,7 +58,7 @@ public class AddBookActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && data != null) {
                     mUri = data.getData();
                     EditText editUri = findViewById(R.id.editUri);
-                    editUri.setText(mUri.getPath());
+                    editUri.setText(mUri.getLastPathSegment());
                 }
                 break;
             default:
