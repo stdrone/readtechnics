@@ -1,12 +1,13 @@
 package ru.stdrone.home.readtechnics.books;
 
-import java.io.IOException;
+import android.net.Uri;
 
 public class BookText {
-    // TODO
-    private Book mBook;
+    private Uri mUri;
+    private int mPosition;
 
-    BookText(Book book) throws IOException {
-        mBook = book;
+    BookText(Uri uri) {
+        mUri = uri;
+        mPosition = 0;
     }
 }

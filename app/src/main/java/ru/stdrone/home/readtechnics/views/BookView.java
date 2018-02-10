@@ -1,11 +1,9 @@
 package ru.stdrone.home.readtechnics.views;
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
 import android.view.ContextMenu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -17,7 +15,7 @@ import ru.stdrone.home.readtechnics.books.BookList;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class BookView extends ListView implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener {
+public class BookView extends ListView implements SearchView.OnQueryTextListener {
     private static final String BOOK_LIST = "BOOK_LIST";
 
     public BookView(Context context) {
@@ -39,23 +37,10 @@ public class BookView extends ListView implements AdapterView.OnItemClickListene
         BookList bookList = new BookList(context.getSharedPreferences(BOOK_LIST, MODE_PRIVATE));
 
         ArrayAdapter<Book> adapter;
-        adapter = new ArrayAdapter<>(context, R.layout.book_list_item, bookList.getList());
+        adapter = new ArrayAdapter<>(context, R.layout.list_item, bookList.getList());
         adapter.registerDataSetObserver(bookList);
 
         setAdapter(adapter);
-
-        setOnItemClickListener(this);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ArrayAdapter adapter = getAdapter();
-        Book book = (Book) adapter.getItem(position);
-        if (book != null) {
-            // TODO: implement
-            Snackbar.make(view, "Clicked " + book.getmName(), Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-        }
     }
 
     public void onCreateContextMenu(ContextMenu menu, ContextMenu.ContextMenuInfo menuInfo) {

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ru.stdrone.home.readtechnics.BookTextActivity">
+
+    <include layout="@layout/book_text_content" />
+
+    <ToggleButton
+        android:id="@+id/toggleSpeach"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="bottom|end"
+        android:textOn=""
+        android:textOff=""
+        android:layout_margin="@dimen/fab_margin"
+        android:foreground="@drawable/speak_check_fore"
+        android:background="@drawable/speak_check_back"
+        android:foregroundTint="@color/colorPrimary"/>
+
+</android.support.design.widget.CoordinatorLayout>

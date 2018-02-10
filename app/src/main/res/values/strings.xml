@@ -8,4 +8,5 @@
     <string name="list_context_menu_delete">Delete</string>
     <string name="search_title">Find</string>
     <string name="search_hint">Find book</string>
+    <string name="title_activity_book_text">BookTextActivity</string>
 </resources>

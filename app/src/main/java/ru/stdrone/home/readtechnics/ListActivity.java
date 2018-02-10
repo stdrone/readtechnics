@@ -9,6 +9,8 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 
 import ru.stdrone.home.readtechnics.books.Book;
@@ -28,6 +30,18 @@ public class ListActivity extends AppCompatActivity {
 
         mList = findViewById(R.id.list_of_books);
         registerForContextMenu(mList);
+        mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ArrayAdapter<Book> adapter = mList.getAdapter();
+                Book book = adapter.getItem(position);
+                if (book != null) {
+                    Intent intent = new Intent(ListActivity.this, BookTextActivity.class);
+                    intent.putExtra(Book.EXTRA_BOOK, book);
+                    startActivity(intent);
+                }
+            }
+        });
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

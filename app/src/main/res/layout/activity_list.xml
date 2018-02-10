@@ -8,7 +8,7 @@
 
     <include
         android:id="@+id/include"
-        layout="@layout/content_list" />
+        layout="@layout/list_content" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

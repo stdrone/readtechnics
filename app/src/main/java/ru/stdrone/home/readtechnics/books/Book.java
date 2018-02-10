@@ -11,9 +11,9 @@ import java.io.Serializable;
 
 public class Book implements Serializable {
     public static final String EXTRA_BOOK = "book";
+    private int mPosition;
     private String mName;
     private String mPath;
-    int mPosition;
 
     public Book(String name, String filePath) {
         this.mName = name;
@@ -26,6 +26,10 @@ public class Book implements Serializable {
 
     public String getPath() {
         return mPath;
+    }
+
+    public int getPosition() {
+        return mPosition;
     }
 
     @Override
