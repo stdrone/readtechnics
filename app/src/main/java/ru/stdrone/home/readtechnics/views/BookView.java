@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import ru.stdrone.home.readtechnics.R;
 import ru.stdrone.home.readtechnics.books.Book;
@@ -16,7 +17,7 @@ import ru.stdrone.home.readtechnics.books.BookList;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class BookView extends ListView implements AdapterView.OnItemClickListener {
+public class BookView extends ListView implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener {
     private static final String BOOK_LIST = "BOOK_LIST";
 
     public BookView(Context context) {
@@ -34,13 +35,8 @@ public class BookView extends ListView implements AdapterView.OnItemClickListene
         onCreate(context);
     }
 
-    public BookView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        onCreate(context);
-    }
-
     private void onCreate(Context context) {
-        BookList bookList = BookList.Restore(context.getSharedPreferences(BOOK_LIST, MODE_PRIVATE));
+        BookList bookList = new BookList(context.getSharedPreferences(BOOK_LIST, MODE_PRIVATE));
 
         ArrayAdapter<Book> adapter;
         adapter = new ArrayAdapter<>(context, R.layout.book_list_item, bookList.getList());
@@ -57,7 +53,7 @@ public class BookView extends ListView implements AdapterView.OnItemClickListene
         Book book = (Book) adapter.getItem(position);
         if (book != null) {
             // TODO: implement
-            Snackbar.make(view, "Clicked " + book.getName(), Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Clicked " + book.getmName(), Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }
     }
@@ -66,7 +62,7 @@ public class BookView extends ListView implements AdapterView.OnItemClickListene
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         final Book book = getAdapter().getItem(info.position);
         if (book != null) {
-            menu.setHeaderTitle(book.getName());
+            menu.setHeaderTitle(book.getmName());
 
             MenuItem menuItem = menu.add(R.string.list_context_menu_delete);
             menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -84,5 +80,16 @@ public class BookView extends ListView implements AdapterView.OnItemClickListene
     @SuppressWarnings("unchecked")
     public ArrayAdapter<Book> getAdapter() {
         return ((ArrayAdapter<Book>) super.getAdapter());
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        getAdapter().getFilter().filter(newText);
+        return true;
     }
 }

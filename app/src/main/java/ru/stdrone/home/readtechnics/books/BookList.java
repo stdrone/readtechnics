@@ -1,9 +1,7 @@
 package ru.stdrone.home.readtechnics.books;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
-import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -21,14 +19,25 @@ public class BookList extends DataSetObserver {
 
     private ArrayList<Book> mBookList;
     private SharedPreferences mPreferences;
-    private Bundle mBundle;
 
-    private BookList(SharedPreferences preferences) {
-        mBookList = Deserialize(preferences.getString(BOOK_LIST, ""));
+    public BookList(SharedPreferences preferences) {
+        mPreferences = preferences;
+        if (preferences.contains(BOOK_LIST)) {
+            mBookList = Deserialize(preferences.getString(BOOK_LIST, ""));
+        } else {
+            mBookList = new ArrayList<>();
+        }
     }
 
-    private BookList() {
-        mBookList = new ArrayList<>();
+    private static String Serialize(ArrayList arrayList) {
+        return new Gson().toJson(arrayList);
+    }
+
+    private static ArrayList<Book> Deserialize(String data) {
+        Type type = new TypeToken<List<Book>>() {
+        }.getType();
+
+        return new Gson().fromJson(data, type);
     }
 
     @Override
@@ -42,28 +51,9 @@ public class BookList extends DataSetObserver {
         Collections.sort(mBookList, new Comparator<Book>() {
             @Override
             public int compare(Book o1, Book o2) {
-                return o1.getName().compareTo(o2.getName());
+                return o1.getmName().compareTo(o2.getmName());
             }
         });
-    }
-
-    public static BookList Restore(SharedPreferences preferences) {
-        if (preferences.contains(BOOK_LIST)) {
-            return new BookList(preferences);
-        } else {
-            return new BookList();
-        }
-    }
-
-    private static String Serialize(ArrayList arrayList) {
-        return new Gson().toJson(arrayList);
-    }
-
-    private static ArrayList<Book> Deserialize(String data) {
-        Type type = new TypeToken<List<Book>>() {
-        }.getType();
-
-        return new Gson().fromJson(data, type);
     }
 
     private void saveList() {

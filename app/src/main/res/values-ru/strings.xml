@@ -6,4 +6,6 @@
     <string name="edit_header">Добавление книги</string>
     <string name="edit_button">Добавить</string>
     <string name="list_context_menu_delete">Удалить</string>
+    <string name="search_title">Найти</string>
+    <string name="search_hint">Найти книгу</string>
 </resources>

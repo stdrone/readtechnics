@@ -8,7 +8,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.util.Objects;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import ru.stdrone.home.readtechnics.books.Book;
 
@@ -16,18 +20,21 @@ public class AddBookActivity extends AppCompatActivity {
 
     private static final int READ_REQUEST_CODE = 1;
     Uri mUri;
+    EditText mNameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_book);
 
+        mNameView = findViewById(R.id.editName);
+
         Button button = findViewById(R.id.editButton);
         button.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                String name = ((EditText) findViewById(R.id.editName)).getText().toString();
+                String name = mNameView.getText().toString();
                 if (!name.equals("") && mUri != null) {
                     Book book = new Book(name, mUri.getPath());
                     Intent intent = new Intent();
@@ -59,12 +66,25 @@ public class AddBookActivity extends AppCompatActivity {
                     mUri = data.getData();
                     EditText editUri = findViewById(R.id.editUri);
                     editUri.setText(mUri.getLastPathSegment());
+                    if (mNameView.getText().toString().equals("")) {
+                        try {
+                            InputStream stream = getContentResolver().openInputStream(mUri);
+                            if (stream != null) {
+                                InputStreamReader isReader = new InputStreamReader(stream);
+                                BufferedReader reader = new BufferedReader(isReader);
+                                mNameView.setText(reader.readLine());
+                                reader.close();
+                                stream.close();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
         }
-
     }
 
     @Override
