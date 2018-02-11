@@ -12,6 +12,7 @@ import android.widget.SearchView;
 import ru.stdrone.home.readtechnics.R;
 import ru.stdrone.home.readtechnics.books.Book;
 import ru.stdrone.home.readtechnics.books.BookList;
+import ru.stdrone.home.readtechnics.books.BookText;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -54,6 +55,18 @@ public class BookListView extends ListView implements SearchView.OnQueryTextList
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     getAdapter().remove(book);
+                    Context context = BookListView.this.getContext();
+                    new BookText(book).reset(context);
+                    invalidateViews();
+                    return true;
+                }
+            });
+            menuItem = menu.add(R.string.list_context_menu_clear);
+            menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Context context = BookListView.this.getContext();
+                    new BookText(book).reset(context);
                     invalidateViews();
                     return true;
                 }

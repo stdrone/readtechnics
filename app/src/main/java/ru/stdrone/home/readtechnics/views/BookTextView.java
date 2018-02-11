@@ -50,31 +50,13 @@ public class BookTextView extends android.support.v7.widget.AppCompatTextView {
         setLayoutParams(params);
     }
 
-    public void reset() {
-        if (mBookText != null) {
-            mBookText.reset();
-            setText();
-            mBookText.Store(this.getContext());
-        }
-    }
-
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
         super.onTextChanged(text, start, lengthBefore, lengthAfter);
-        if (mBookText != null) {
-            Layout layout = getLayout();
-            if (layout != null) {
-                int lineHeight = layout.getLineTop(2) - layout.getLineTop(1);
-                int viewHeight = ((View) this.getParent()).getHeight();
-                int lineCount = viewHeight / lineHeight;
-                int position = mBookText.getPosition();
-                int line = layout.getLineForOffset(position) - lineCount / 2;
-                ScrollTo(line);
-            }
-        }
+        ScrollToCurrent();
     }
 
-    private void setText() {
+    private void setCurrentText() {
         if (mBookText != null) {
             String text = String.format(FORMAT_TEXT, mCorrectSentenceColor, mBookText.getCorrectSentences())
                     .concat(String.format(FORMAT_TEXT, mCurrentSentenceColor, mBookText.getCurrentSentence()))
@@ -90,41 +72,52 @@ public class BookTextView extends android.support.v7.widget.AppCompatTextView {
 
     public void setBookText(BookText bookText) {
         mBookText = bookText;
-        setText();
+        setCurrentText();
     }
 
     public void setBook(Book book) {
         try {
-            setBookText(new BookText(this.getContext(), book));
+            BookText text = new BookText(book);
+            text.init(this.getContext());
+            setBookText(text);
         } catch (IOException e) {
             setText(e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public void checkWord(String word) {
+    public void checkWord(String word) throws IOException {
         if (mBookText != null) {
             mBookText.checkWord(word);
             mBookText.Store(this.getContext());
-            setText();
+            setCurrentText();
         }
     }
 
-    public void ScrollTo(final int LineNumber) {
+    public void ScrollToCurrent() {
 
         post(new Runnable() {
             @Override
             public void run() {
-                int line = Math.min(getLayout().getLineCount(), Math.max(0, LineNumber));
+                if (mBookText != null) {
+                    Layout layout = getLayout();
+                    if (layout != null) {
+                        int lineHeight = layout.getLineTop(2) - layout.getLineTop(1);
+                        int viewHeight = ((View) getParent()).getHeight();
+                        int lineCount = viewHeight / lineHeight;
+                        int position = mBookText.getPosition();
+                        int line = layout.getLineForOffset(position) - lineCount / 2;
+                        line = Math.min(getLayout().getLineCount(), Math.max(0, line));
 
-                int y = getLayout().getLineTop(line);
-                int diff = y - getLayout().getLineTop(mCurrentLine);
+                        int y = getLayout().getLineTop(line);
+                        int diff = y - getLayout().getLineTop(mCurrentLine);
 
-                if (mCurrentLine != line) {
-                    ((ScrollView) getParent()).smoothScrollTo(0, y);
+                        if (mCurrentLine != line) {
+                            ((ScrollView) getParent()).smoothScrollTo(0, y);
+                            mCurrentLine = line;
+                        }
+                    }
                 }
-
-                mCurrentLine = line;
             }
         });
     }

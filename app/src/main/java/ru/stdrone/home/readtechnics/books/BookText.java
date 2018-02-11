@@ -2,12 +2,16 @@ package ru.stdrone.home.readtechnics.books;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 
 import com.google.common.primitives.Chars;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class BookText implements Closeable {
     private static final int BUFFER = 2000;
@@ -16,40 +20,45 @@ public class BookText implements Closeable {
     private StringBuffer mTextBuffer;
     private String mPath;
     private BufferedReader mReader;
-    private int mPositionWord, mPositionSentence, mNextWord;
+    private int mPositionWord, mPositionSentence, mNextWord, mBufferStart;
 
 
-    public BookText(Context context, Book book) throws IOException {
+    public BookText(Book book) {
         mPath = book.getPath();
-        mReader = book.getReader(context);
+    }
 
-        SharedPreferences preferences = context.getSharedPreferences(BOOK_PREFERENCES, Context.MODE_PRIVATE);
-        mPositionWord = preferences.getInt(mPath, 0);
+    public void init(Context context) throws IOException {
+        if (mTextBuffer == null) {
+            mReader = getReader(context);
 
-        mTextBuffer = new StringBuffer();
+            SharedPreferences preferences = context.getSharedPreferences(BOOK_PREFERENCES, Context.MODE_PRIVATE);
+            mPositionWord = preferences.getInt(mPath, 0);
 
-        if (mReader.skip(Math.max(mPositionWord - BUFFER, 0)) >= 0) {
-            char[] buffer = new char[BUFFER * 2];
-            if (mReader.read(buffer, 0, BUFFER * 2) > 0) {
-                mTextBuffer.append(String.valueOf(buffer).replace("\0", ""));
+            mTextBuffer = new StringBuffer();
+
+            mBufferStart = Math.max(mPositionWord - BUFFER, 0);
+
+            if (mReader.skip(mBufferStart) >= 0) {
+                readText(BUFFER * 2);
+                mPositionWord -= mBufferStart;
+                mNextWord = nextWord(mPositionWord);
+                mPositionSentence = prevSentence();
             }
         }
-        mNextWord = nextWord(mPositionWord);
-
-        mPositionSentence = prevSentence();
     }
 
     public void Store(Context context) {
         SharedPreferences preferences = context.getSharedPreferences(BOOK_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = preferences.edit();
-        edit.putInt(mPath, mPositionWord);
+        edit.putInt(mPath, mBufferStart + mPositionWord);
         edit.apply();
     }
 
-    public void reset() {
-        mPositionSentence = 0;
-        mPositionWord = 0;
-        mNextWord = nextWord(mPositionWord);
+    public void reset(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(BOOK_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = preferences.edit();
+        edit.remove(mPath);
+        edit.apply();
     }
 
     public int getPosition() {
@@ -100,13 +109,43 @@ public class BookText implements Closeable {
         return Math.max(0, Math.min(position, mTextBuffer.length() - 1));
     }
 
-    public void checkWord(String word) {
+    public void checkWord(String word) throws IOException {
         mPositionWord = mNextWord;
         mNextWord = nextWord(mPositionWord);
+        checkBuffer();
+    }
+
+    private void checkBuffer() throws IOException {
+        int halfBuffer = BUFFER / 2;
+        if (mNextWord > BUFFER + halfBuffer) {
+            mTextBuffer.delete(0, halfBuffer);
+            readText(halfBuffer);
+            mBufferStart += halfBuffer;
+            mPositionWord -= halfBuffer;
+            mNextWord -= halfBuffer;
+            mPositionSentence -= halfBuffer;
+        }
     }
 
     @Override
     public void close() throws IOException {
         mReader.close();
     }
+
+    private void readText(int len) throws IOException {
+        char[] buffer = new char[len];
+        if (mReader.read(buffer, 0, len) > 0) {
+            mTextBuffer.append(String.valueOf(buffer).replace("\0", ""));
+        }
+    }
+
+    private BufferedReader getReader(Context context) throws FileNotFoundException {
+        InputStream stream = context.getContentResolver().openInputStream(Uri.parse(mPath));
+        if (stream != null) {
+            InputStreamReader isReader = new InputStreamReader(stream);
+            return new BufferedReader(isReader);
+        }
+        return null;
+    }
+
 }

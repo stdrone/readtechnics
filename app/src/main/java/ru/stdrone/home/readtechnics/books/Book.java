@@ -1,12 +1,5 @@
 package ru.stdrone.home.readtechnics.books;
 
-import android.content.Context;
-import android.net.Uri;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 
 public class Book implements Serializable {
@@ -24,7 +17,7 @@ public class Book implements Serializable {
         return mName;
     }
 
-    public String getPath() {
+    String getPath() {
         return mPath;
     }
 
@@ -35,14 +28,5 @@ public class Book implements Serializable {
     @Override
     public String toString() {
         return getmName();
-    }
-
-    BufferedReader getReader(Context context) throws FileNotFoundException {
-        InputStream stream = context.getContentResolver().openInputStream(Uri.parse(mPath));
-        if (stream != null) {
-            InputStreamReader isReader = new InputStreamReader(stream);
-            return new BufferedReader(isReader);
-        }
-        return null;
     }
 }

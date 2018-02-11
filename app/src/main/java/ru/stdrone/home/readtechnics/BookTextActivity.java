@@ -10,6 +10,8 @@ import android.widget.CompoundButton;
 import android.widget.ScrollView;
 import android.widget.ToggleButton;
 
+import java.io.IOException;
+
 import ru.stdrone.home.readtechnics.books.Book;
 import ru.stdrone.home.readtechnics.books.BookText;
 import ru.stdrone.home.readtechnics.views.BookTextView;
@@ -20,6 +22,7 @@ public class BookTextActivity extends AppCompatActivity implements View.OnTouchL
 
     BookTextView mBookTextView;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,23 +33,21 @@ public class BookTextActivity extends AppCompatActivity implements View.OnTouchL
         mBookTextView.setBook(book);
 
         ScrollView scrollView = findViewById(R.id.scroll_text);
+        scrollView.setOnTouchListener(this);
 
         ToggleButton toggleButton = findViewById(R.id.toggleSpeach);
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // TODO: change listen status
-                mBookTextView.checkWord("");
+                try {
+                    mBookTextView.checkWord("");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 buttonView.setChecked(true);
                 Snackbar.make(buttonView, "Replace with your own action " + isChecked, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-            }
-        });
-        toggleButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mBookTextView.reset();
-                return true;
             }
         });
     }
