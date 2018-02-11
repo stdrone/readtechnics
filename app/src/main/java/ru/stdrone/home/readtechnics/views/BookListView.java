@@ -15,20 +15,20 @@ import ru.stdrone.home.readtechnics.books.BookList;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class BookView extends ListView implements SearchView.OnQueryTextListener {
+public class BookListView extends ListView implements SearchView.OnQueryTextListener {
     private static final String BOOK_LIST = "BOOK_LIST";
 
-    public BookView(Context context) {
+    public BookListView(Context context) {
         super(context);
         onCreate(context);
     }
 
-    public BookView(Context context, AttributeSet attrs) {
+    public BookListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         onCreate(context);
     }
 
-    public BookView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BookListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         onCreate(context);
     }

@@ -14,13 +14,13 @@ import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 
 import ru.stdrone.home.readtechnics.books.Book;
-import ru.stdrone.home.readtechnics.views.BookView;
+import ru.stdrone.home.readtechnics.views.BookListView;
 
 public class ListActivity extends AppCompatActivity {
 
     private static final int REQUEST_ADD_BOOK = 1;
 
-    BookView mList;
+    BookListView mList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

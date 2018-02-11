@@ -1,22 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ru.stdrone.home.readtechnics.BookTextActivity">
 
-    <include layout="@layout/book_text_content" />
+    <ScrollView
+        android:id="@+id/scroll_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ru.stdrone.home.readtechnics.views.BookTextView
+            android:id="@+id/book_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:text=""
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </ScrollView>
 
     <ToggleButton
         android:id="@+id/toggleSpeach"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_gravity="top|end"
-        android:textOn=""
-        android:textOff=""
         android:layout_margin="@dimen/fab_margin"
-        android:foreground="@drawable/speak_check_fore"
         android:background="@drawable/speak_check_back"
-        android:foregroundTint="@color/colorPrimary"/>
+        android:foreground="@drawable/speak_check_fore"
+        android:foregroundTint="@color/colorPrimary"
+        android:textOff=""
+        android:textOn="" />
 
 </android.support.design.widget.CoordinatorLayout>
