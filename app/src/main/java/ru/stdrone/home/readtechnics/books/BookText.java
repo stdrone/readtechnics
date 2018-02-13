@@ -1,10 +1,7 @@
 package ru.stdrone.home.readtechnics.books;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
-
-import com.google.common.primitives.Chars;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -14,116 +11,62 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class BookText implements Closeable {
+    static final char TERMINATOR = '\0';
     private static final int BUFFER = 2000;
-    private static final String BOOK_PREFERENCES = "BOOK_PREFERENCES";
-    private final char[] separator = new char[]{'.', '!', '?'};
     private StringBuffer mTextBuffer;
     private String mPath;
     private BufferedReader mReader;
-    private int mPositionWord, mPositionSentence, mNextWord, mBufferStart;
+    private int mBufferStart;
+    private int mBufferLength;
 
 
-    public BookText(Book book) {
+    BookText(Book book) {
         mPath = book.getPath();
     }
 
-    public void init(Context context) throws IOException {
+    void init(Context context, int position) throws IOException {
         if (mTextBuffer == null) {
             mReader = getReader(context);
 
-            SharedPreferences preferences = context.getSharedPreferences(BOOK_PREFERENCES, Context.MODE_PRIVATE);
-            mPositionWord = preferences.getInt(mPath, 0);
-
             mTextBuffer = new StringBuffer();
 
-            mBufferStart = Math.max(mPositionWord - BUFFER, 0);
+            mBufferStart = Math.max(position - BUFFER, 0);
 
             if (mReader.skip(mBufferStart) >= 0) {
                 readText(BUFFER * 2);
-                mPositionWord -= mBufferStart;
-                mNextWord = nextWord(mPositionWord);
-                mPositionSentence = prevSentence();
             }
         }
     }
 
-    public void Store(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(BOOK_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = preferences.edit();
-        edit.putInt(mPath, mBufferStart + mPositionWord);
-        edit.apply();
+    int getBufferPosition(int position) {
+        return Math.max(0, Math.min(mBufferLength, position - mBufferStart));
     }
 
-    public void reset(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(BOOK_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = preferences.edit();
-        edit.remove(mPath);
-        edit.apply();
+    String getBuffer(int start, int end) throws IOException {
+        checkBuffer(start);
+        end = Math.max(start, end);
+        return mTextBuffer.substring(getBufferPosition(start), getBufferPosition(end));
     }
 
-    public int getPosition() {
-        return mPositionWord;
+    String getBuffer(int start) throws IOException {
+        checkBuffer(start);
+        return mTextBuffer.substring(getBufferPosition(start));
     }
 
-    public String getCorrectSentences() {
-        return mTextBuffer.substring(0, mPositionSentence);
+    char charAt(int position) throws IOException {
+        checkBuffer(position);
+        position -= mBufferStart;
+        if (position < 0 || position >= mBufferLength)
+            return TERMINATOR;
+        return mTextBuffer.charAt(position);
     }
 
-    public String getCurrentSentence() {
-        return mTextBuffer.substring(mPositionSentence, Math.max(mPositionWord, mPositionSentence));
-    }
-
-    public String getCurrentWord() {
-        return mTextBuffer.substring(mPositionWord, mNextWord);
-    }
-
-    public String getLastText() {
-        return mTextBuffer.substring(mNextWord);
-    }
-
-    private int prevSentence() {
-        int position = mPositionWord;
-        do {
-            position--;
-        } while (position >= 0 && !Chars.contains(separator, mTextBuffer.charAt(position)));
-        return Math.max(position, 0);
-    }
-
-    private int nextWord(int start) {
-        int position = start;
-        boolean foundLetter = false, finish = false;
-        while (!finish) {
-            if (!foundLetter) {
-                if (Chars.contains(separator, mTextBuffer.charAt(position))) {
-                    mPositionWord = mPositionSentence = position;
-                }
-                foundLetter = Character.isLetter(mTextBuffer.charAt(position));
-            } else {
-                finish = !Character.isLetter(mTextBuffer.charAt(position));
-            }
-            if (!finish) {
-                position += 1;
-                finish = position == 0 || position >= mTextBuffer.length();
-            }
-        }
-        return Math.max(0, Math.min(position, mTextBuffer.length() - 1));
-    }
-
-    public void checkWord(String word) throws IOException {
-        mPositionWord = mNextWord;
-        mNextWord = nextWord(mPositionWord);
-        checkBuffer();
-    }
-
-    private void checkBuffer() throws IOException {
+    private void checkBuffer(int position) throws IOException {
         int halfBuffer = BUFFER / 2;
-        if (mNextWord > BUFFER + halfBuffer) {
+        if (getBufferPosition(position) > BUFFER + halfBuffer) {
             mTextBuffer.delete(0, halfBuffer);
             readText(halfBuffer);
             mBufferStart += halfBuffer;
-            mPositionWord -= halfBuffer;
-            mNextWord -= halfBuffer;
-            mPositionSentence -= halfBuffer;
         }
     }
 
@@ -136,6 +79,7 @@ public class BookText implements Closeable {
         char[] buffer = new char[len];
         if (mReader.read(buffer, 0, len) > 0) {
             mTextBuffer.append(String.valueOf(buffer).replace("\0", ""));
+            mBufferLength = mTextBuffer.length();
         }
     }
 
@@ -148,4 +92,7 @@ public class BookText implements Closeable {
         return null;
     }
 
+    public void reset(Context context) {
+
+    }
 }

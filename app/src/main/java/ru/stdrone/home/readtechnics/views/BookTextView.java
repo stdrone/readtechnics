@@ -14,18 +14,17 @@ import android.widget.ScrollView;
 import java.io.IOException;
 
 import ru.stdrone.home.readtechnics.books.Book;
-import ru.stdrone.home.readtechnics.books.BookText;
+import ru.stdrone.home.readtechnics.books.BookReader;
 
 public class BookTextView extends android.support.v7.widget.AppCompatTextView {
 
     private static final String FORMAT_TEXT = "<font color=\"%s\">%s</font>";
-    private long ANIMATION_DURATION = 500;
     private String mCorrectSentenceColor = "#15e4be";
     private String mCurrentSentenceColor = "#00FF00";
     private String mCurrentWordColor = "#afde2d";
     private String mLastTextColor = "#000000";
 
-    private BookText mBookText;
+    private BookReader mBookReader;
     private int mCurrentLine = 0;
 
     public BookTextView(Context context, AttributeSet attrs) {
@@ -56,12 +55,12 @@ public class BookTextView extends android.support.v7.widget.AppCompatTextView {
         ScrollToCurrent();
     }
 
-    private void setCurrentText() {
-        if (mBookText != null) {
-            String text = String.format(FORMAT_TEXT, mCorrectSentenceColor, mBookText.getCorrectSentences())
-                    .concat(String.format(FORMAT_TEXT, mCurrentSentenceColor, mBookText.getCurrentSentence()))
-                    .concat(String.format(FORMAT_TEXT, mCurrentWordColor, mBookText.getCurrentWord()))
-                    .concat(String.format(FORMAT_TEXT, mLastTextColor, mBookText.getLastText()))
+    private void setCurrentText() throws IOException {
+        if (mBookReader != null) {
+            String text = String.format(FORMAT_TEXT, mCorrectSentenceColor, mBookReader.getCorrectSentences())
+                    .concat(String.format(FORMAT_TEXT, mCurrentSentenceColor, mBookReader.getCurrentSentence()))
+                    .concat(String.format(FORMAT_TEXT, mCurrentWordColor, mBookReader.getCurrentWord()))
+                    .concat(String.format(FORMAT_TEXT, mLastTextColor, mBookReader.getLastText()))
                     .replace("\n", "<br>");
 
             setText(Html.fromHtml(text));
@@ -70,15 +69,16 @@ public class BookTextView extends android.support.v7.widget.AppCompatTextView {
         }
     }
 
-    public void setBookText(BookText bookText) {
-        mBookText = bookText;
+    public void setBookText(BookReader bookReader) throws IOException {
+        mBookReader = bookReader;
         setCurrentText();
     }
 
     public void setBook(Book book) {
         try {
-            BookText text = new BookText(book);
-            text.init(this.getContext());
+            Context context = this.getContext();
+            BookReader text = new BookReader(context, book);
+            text.init(context);
             setBookText(text);
         } catch (IOException e) {
             setText(e.getMessage());
@@ -87,9 +87,8 @@ public class BookTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     public void checkWord(String word) throws IOException {
-        if (mBookText != null) {
-            mBookText.checkWord(word);
-            mBookText.Store(this.getContext());
+        if (mBookReader != null) {
+            mBookReader.checkWord(word);
             setCurrentText();
         }
     }
@@ -99,13 +98,13 @@ public class BookTextView extends android.support.v7.widget.AppCompatTextView {
         post(new Runnable() {
             @Override
             public void run() {
-                if (mBookText != null) {
+                if (mBookReader != null) {
                     Layout layout = getLayout();
                     if (layout != null) {
                         int lineHeight = layout.getLineTop(2) - layout.getLineTop(1);
                         int viewHeight = ((View) getParent()).getHeight();
                         int lineCount = viewHeight / lineHeight;
-                        int position = mBookText.getPosition();
+                        int position = mBookReader.getPosition();
                         int line = layout.getLineForOffset(position) - lineCount / 2;
                         line = Math.min(getLayout().getLineCount(), Math.max(0, line));
 
