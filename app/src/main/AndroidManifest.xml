@@ -26,7 +26,7 @@
             android:name=".AddBookActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".BookTextActivity"
+            android:name=".BookReadingActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

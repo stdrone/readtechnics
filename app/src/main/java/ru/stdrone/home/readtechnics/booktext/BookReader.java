@@ -1,4 +1,4 @@
-package ru.stdrone.home.readtechnics.books;
+package ru.stdrone.home.readtechnics.booktext;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,7 +7,10 @@ import com.google.common.primitives.Chars;
 
 import java.io.IOException;
 
-import static ru.stdrone.home.readtechnics.books.BookText.TERMINATOR;
+import ru.stdrone.home.readtechnics.book.Book;
+import ru.stdrone.home.readtechnics.statistics.StatisticCollector;
+
+import static ru.stdrone.home.readtechnics.booktext.BookText.TERMINATOR;
 
 public class BookReader {
 
@@ -29,34 +32,37 @@ public class BookReader {
         mPositionWord = mPreferences.getInt(mPrefPath, 0);
     }
 
-    public void init(Context context) throws IOException {
+    void init(Context context) throws IOException {
         mBookText.init(context, mPositionWord);
         mNextWord = nextWord(mPositionWord);
         mPositionSentence = prevSentence();
     }
 
-    public void checkWord(String word) throws IOException {
-        mPositionWord = mNextWord;
-        mNextWord = nextWord(mPositionWord);
+    void checkWord(String word) throws IOException {
+        if (word.equals("")) {
+            mPositionWord = mNextWord;
+            mNextWord = nextWord(mPositionWord);
+            StatisticCollector.getInstance().endWord();
+        }
     }
 
-    public int getPosition() {
+    int getPosition() {
         return mBookText.getBufferPosition(mPositionWord);
     }
 
-    public Object getCorrectSentences() throws IOException {
+    Object getCorrectSentences() throws IOException {
         return mBookText.getBuffer(0, mPositionSentence);
     }
 
-    public Object getCurrentSentence() throws IOException {
+    Object getCurrentSentence() throws IOException {
         return mBookText.getBuffer(mPositionSentence, mPositionWord);
     }
 
-    public Object getCurrentWord() throws IOException {
+    Object getCurrentWord() throws IOException {
         return mBookText.getBuffer(mPositionWord, mNextWord);
     }
 
-    public Object getLastText() throws IOException {
+    Object getLastText() throws IOException {
         return mBookText.getBuffer(mNextWord);
     }
 
@@ -81,6 +87,9 @@ public class BookReader {
     }
 
     private boolean checkSentence() {
+        StatisticCollector.StatisticStorage stat = StatisticCollector.getInstance().endSentence();
+
+
         return true;
     }
 
@@ -88,16 +97,19 @@ public class BookReader {
         int position = start;
         boolean foundLetter = false, finish = false;
         while (!finish) {
+            char chCur = mBookText.charAt(position);
             if (!foundLetter) {
-                if (Chars.contains(separator, mBookText.charAt(position))) {
-                    mPositionWord = mPositionSentence = position + 1;
+                if (Chars.contains(separator, chCur)) {
                     if (checkSentence()) {
+                        mPositionSentence = position + 1;
                         store();
                     }
                 }
-                foundLetter = Character.isLetter(mBookText.charAt(position));
+                if (foundLetter = Character.isLetter(chCur) || chCur == '\0') {
+                    mPositionWord = position;
+                }
             } else {
-                finish = !Character.isLetter(mBookText.charAt(position));
+                finish = !Character.isLetter(chCur);
             }
             if (!finish) {
                 position += 1;

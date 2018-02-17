@@ -1,4 +1,4 @@
-package ru.stdrone.home.readtechnics.books;
+package ru.stdrone.home.readtechnics.booktext;
 
 import android.content.Context;
 import android.net.Uri;
@@ -9,6 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import ru.stdrone.home.readtechnics.book.Book;
 
 public class BookText implements Closeable {
     static final char TERMINATOR = '\0';
@@ -77,7 +79,7 @@ public class BookText implements Closeable {
 
     private void readText(int len) throws IOException {
         char[] buffer = new char[len];
-        if (mReader.read(buffer, 0, len) > 0) {
+        if ((mBufferLength = mReader.read(buffer, 0, len)) > 0) {
             mTextBuffer.append(String.valueOf(buffer).replace("\0", ""));
             mBufferLength = mTextBuffer.length();
         }

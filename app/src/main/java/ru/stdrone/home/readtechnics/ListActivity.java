@@ -13,8 +13,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 
-import ru.stdrone.home.readtechnics.books.Book;
-import ru.stdrone.home.readtechnics.views.BookListView;
+import ru.stdrone.home.readtechnics.book.Book;
+import ru.stdrone.home.readtechnics.book.BookListView;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -36,7 +36,7 @@ public class ListActivity extends AppCompatActivity {
                 ArrayAdapter<Book> adapter = mList.getAdapter();
                 Book book = adapter.getItem(position);
                 if (book != null) {
-                    Intent intent = new Intent(ListActivity.this, BookTextActivity.class);
+                    Intent intent = new Intent(ListActivity.this, BookReadingActivity.class);
                     intent.putExtra(Book.EXTRA_BOOK, book);
                     startActivity(intent);
                 }

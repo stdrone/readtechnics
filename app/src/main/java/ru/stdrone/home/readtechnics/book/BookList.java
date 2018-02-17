@@ -1,4 +1,4 @@
-package ru.stdrone.home.readtechnics.books;
+package ru.stdrone.home.readtechnics.book;
 
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
@@ -44,7 +44,7 @@ public class BookList extends DataSetObserver {
     public void onChanged() {
         super.onChanged();
         sort();
-        saveList();
+        store();
     }
 
     private void sort() {
@@ -56,7 +56,7 @@ public class BookList extends DataSetObserver {
         });
     }
 
-    private void saveList() {
+    private void store() {
         SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(BOOK_LIST, Serialize(mBookList));
         editor.apply();

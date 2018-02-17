@@ -9,12 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import ru.stdrone.home.readtechnics.books.Book;
+import ru.stdrone.home.readtechnics.book.Book;
 
 public class AddBookActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package ru.stdrone.home.readtechnics.views;
+package ru.stdrone.home.readtechnics.book;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,9 +10,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import ru.stdrone.home.readtechnics.R;
-import ru.stdrone.home.readtechnics.books.Book;
-import ru.stdrone.home.readtechnics.books.BookList;
-import ru.stdrone.home.readtechnics.books.BookReader;
+import ru.stdrone.home.readtechnics.booktext.BookReader;
 
 import static android.content.Context.MODE_PRIVATE;
 

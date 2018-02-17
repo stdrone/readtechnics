@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ru.stdrone.home.readtechnics.BookTextActivity">
+    tools:context="ru.stdrone.home.readtechnics.BookReadingActivity">
 
     <ScrollView
         android:id="@+id/scroll_text"
@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ru.stdrone.home.readtechnics.views.BookTextView
+        <ru.stdrone.home.readtechnics.booktext.BookTextView
             android:id="@+id/book_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
