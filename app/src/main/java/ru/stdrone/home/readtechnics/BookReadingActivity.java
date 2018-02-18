@@ -14,7 +14,7 @@ import java.io.IOException;
 
 import ru.stdrone.home.readtechnics.model.Book;
 import ru.stdrone.home.readtechnics.model.BookText;
-import ru.stdrone.home.readtechnics.service.StatisticCollector;
+import ru.stdrone.home.readtechnics.service.SpeechListner;
 import ru.stdrone.home.readtechnics.view.BookTextView;
 
 public class BookReadingActivity extends AppCompatActivity implements View.OnTouchListener {
@@ -22,13 +22,14 @@ public class BookReadingActivity extends AppCompatActivity implements View.OnTou
     BookText bookText;
 
     BookTextView mBookTextView;
+    SpeechListner mListner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_text);
 
-        StatisticCollector collector = new StatisticCollector(this);
+        mListner = new SpeechListner(this);
 
         Book book = (Book) getIntent().getSerializableExtra(Book.EXTRA_BOOK);
         mBookTextView = findViewById(R.id.book_text);

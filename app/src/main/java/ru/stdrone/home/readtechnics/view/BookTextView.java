@@ -119,7 +119,4 @@ public class BookTextView extends android.support.v7.widget.AppCompatTextView {
             }
         });
     }
-
-    public void setStatisticCollector() {
-    }
 }

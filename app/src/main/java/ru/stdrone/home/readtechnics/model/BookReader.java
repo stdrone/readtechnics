@@ -7,6 +7,7 @@ import com.google.common.primitives.Chars;
 
 import java.io.IOException;
 
+import ru.stdrone.home.readtechnics.service.ReadingRules;
 import ru.stdrone.home.readtechnics.service.StatisticCollector;
 
 import static ru.stdrone.home.readtechnics.model.BookText.TERMINATOR;
@@ -22,6 +23,7 @@ public class BookReader {
     private String mPrefPath;
 
     private StatisticCollector mStatistic;
+    private ReadingRules mRules;
 
     private BookText mBookText;
 
@@ -29,6 +31,7 @@ public class BookReader {
         mPrefPath = book.getPath();
         mBookText = new BookText(book);
         mStatistic = new StatisticCollector(context);
+        mRules = new ReadingRules(context);
 
         mPreferences = context.getSharedPreferences(BOOK_PREFERENCES, Context.MODE_PRIVATE);
         mPositionWord = mPreferences.getInt(mPrefPath, 0);
@@ -90,9 +93,7 @@ public class BookReader {
 
     private boolean checkSentence() {
         StatisticStorage stat = mStatistic.endSentence();
-
-
-        return true;
+        return mRules.CheckSentence(stat);
     }
 
     private int nextWord(int start) throws IOException {

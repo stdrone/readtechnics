@@ -16,7 +16,7 @@ public class ReadingRules {
         mSettings = new Settings(context);
     }
 
-    boolean CheckSentence(StatisticStorage statistics) {
+    public boolean CheckSentence(StatisticStorage statistics) {
         return mSettings.getRuleCorrectWordsPerSentenceRate() <= (statistics.getWords() / statistics.getSeconds() * READ_TIME_RATE);
     }
 }
