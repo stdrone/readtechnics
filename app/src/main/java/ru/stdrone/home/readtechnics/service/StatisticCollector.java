@@ -14,7 +14,7 @@ public class StatisticCollector {
     public StatisticCollector(Context context) {
         mTotal = StatisticStorage.fromPreferences(context.getSharedPreferences(STATISTIC_TOTAL, Context.MODE_PRIVATE));
         mSentence = new StatisticStorage();
-        mSentence = new StatisticStorage();
+        mSession = new StatisticStorage();
     }
 
     public void endWord() {

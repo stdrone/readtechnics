@@ -44,7 +44,7 @@ public class BookReader {
     }
 
     public void checkWord(String word) throws IOException {
-        if (word.equals("")) {
+        if (word.toLowerCase().equals(getCurrentWord().toLowerCase())) {
             mPositionWord = mNextWord;
             mNextWord = nextWord(mPositionWord);
             mStatistic.endWord();

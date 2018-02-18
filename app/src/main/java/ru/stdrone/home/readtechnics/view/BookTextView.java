@@ -2,6 +2,7 @@ package ru.stdrone.home.readtechnics.view;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.Html;
 import android.text.Layout;
 import android.util.AttributeSet;
@@ -15,8 +16,9 @@ import java.io.IOException;
 
 import ru.stdrone.home.readtechnics.model.Book;
 import ru.stdrone.home.readtechnics.model.BookReader;
+import ru.stdrone.home.readtechnics.service.SpeechListener;
 
-public class BookTextView extends android.support.v7.widget.AppCompatTextView {
+public class BookTextView extends AppCompatTextView implements SpeechListener.ListenObserver {
 
     private static final String FORMAT_TEXT = "<font color=\"%s\">%s</font>";
     private String mCorrectSentenceColor = "#15e4be";
@@ -86,13 +88,6 @@ public class BookTextView extends android.support.v7.widget.AppCompatTextView {
         }
     }
 
-    public void checkWord(String word) throws IOException {
-        if (mBookReader != null) {
-            mBookReader.checkWord(word);
-            setCurrentText();
-        }
-    }
-
     public void ScrollToCurrent() {
 
         post(new Runnable() {
@@ -118,5 +113,18 @@ public class BookTextView extends android.support.v7.widget.AppCompatTextView {
                 }
             }
         });
+    }
+
+    @Override
+    public void OnListenWord(String word) {
+        if (mBookReader != null) {
+            try {
+                mBookReader.checkWord(word);
+                setCurrentText();
+            } catch (IOException e) {
+                e.printStackTrace();
+                setText(e.getMessage());
+            }
+        }
     }
 }
