@@ -1,4 +1,4 @@
-package ru.stdrone.home.readtechnics.booktext;
+package ru.stdrone.home.readtechnics.model;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import ru.stdrone.home.readtechnics.book.Book;
+import ru.stdrone.home.readtechnics.model.Book;
 
 public class BookText implements Closeable {
     static final char TERMINATOR = '\0';

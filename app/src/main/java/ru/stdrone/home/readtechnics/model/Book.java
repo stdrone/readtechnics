@@ -1,4 +1,4 @@
-package ru.stdrone.home.readtechnics.book;
+package ru.stdrone.home.readtechnics.model;
 
 import java.io.Serializable;
 
@@ -17,7 +17,7 @@ public class Book implements Serializable {
         return mName;
     }
 
-    public String getPath() {
+    String getPath() {
         return mPath;
     }
 

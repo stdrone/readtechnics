@@ -1,4 +1,4 @@
-package ru.stdrone.home.readtechnics.book;
+package ru.stdrone.home.readtechnics.model;
 
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;

@@ -13,8 +13,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 
-import ru.stdrone.home.readtechnics.book.Book;
-import ru.stdrone.home.readtechnics.book.BookListView;
+import ru.stdrone.home.readtechnics.model.Book;
+import ru.stdrone.home.readtechnics.view.BookListView;
 
 public class ListActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package ru.stdrone.home.readtechnics.booktext;
+package ru.stdrone.home.readtechnics.view;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -13,7 +13,8 @@ import android.widget.ScrollView;
 
 import java.io.IOException;
 
-import ru.stdrone.home.readtechnics.book.Book;
+import ru.stdrone.home.readtechnics.model.Book;
+import ru.stdrone.home.readtechnics.model.BookReader;
 
 public class BookTextView extends android.support.v7.widget.AppCompatTextView {
 
@@ -117,5 +118,8 @@ public class BookTextView extends android.support.v7.widget.AppCompatTextView {
                 }
             }
         });
+    }
+
+    public void setStatisticCollector() {
     }
 }

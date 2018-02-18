@@ -8,7 +8,7 @@
     tools:context="ru.stdrone.home.readtechnics.ListActivity"
     tools:showIn="@layout/activity_list">
 
-    <ru.stdrone.home.readtechnics.book.BookListView
+    <ru.stdrone.home.readtechnics.view.BookListView
         android:id="@+id/list_of_books"
         android:layout_width="0dp"
         android:layout_height="0dp"

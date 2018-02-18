@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import ru.stdrone.home.readtechnics.book.Book;
+import ru.stdrone.home.readtechnics.model.Book;
 
 public class AddBookActivity extends AppCompatActivity {
 

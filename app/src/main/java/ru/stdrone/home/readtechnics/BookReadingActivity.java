@@ -12,10 +12,10 @@ import android.widget.ToggleButton;
 
 import java.io.IOException;
 
-import ru.stdrone.home.readtechnics.book.Book;
-import ru.stdrone.home.readtechnics.booktext.BookText;
-import ru.stdrone.home.readtechnics.booktext.BookTextView;
-import ru.stdrone.home.readtechnics.statistics.StatisticCollector;
+import ru.stdrone.home.readtechnics.model.Book;
+import ru.stdrone.home.readtechnics.model.BookText;
+import ru.stdrone.home.readtechnics.service.StatisticCollector;
+import ru.stdrone.home.readtechnics.view.BookTextView;
 
 public class BookReadingActivity extends AppCompatActivity implements View.OnTouchListener {
 
@@ -23,13 +23,12 @@ public class BookReadingActivity extends AppCompatActivity implements View.OnTou
 
     BookTextView mBookTextView;
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_text);
 
-        StatisticCollector.getInstance().init(this);
+        StatisticCollector collector = new StatisticCollector(this);
 
         Book book = (Book) getIntent().getSerializableExtra(Book.EXTRA_BOOK);
         mBookTextView = findViewById(R.id.book_text);
