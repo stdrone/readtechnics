@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 public class Book implements Serializable {
     public static final String EXTRA_BOOK = "book";
-    private int mPosition;
     private String mName;
     private String mPath;
 
@@ -13,20 +12,16 @@ public class Book implements Serializable {
         this.mPath = filePath;
     }
 
-    public String getmName() {
+    public String getName() {
         return mName;
     }
 
-    String getPath() {
+    public String getPath() {
         return mPath;
-    }
-
-    public int getPosition() {
-        return mPosition;
     }
 
     @Override
     public String toString() {
-        return getmName();
+        return getName();
     }
 }

@@ -1,34 +1,25 @@
 package ru.stdrone.home.readtechnics.model;
 
 import android.content.Context;
-import android.net.Uri;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import ru.stdrone.home.readtechnics.model.Book;
-
 public class BookText implements Closeable {
     static final char TERMINATOR = '\0';
     private static final int BUFFER = 2000;
+    private InputStream mStream;
     private StringBuffer mTextBuffer;
-    private String mPath;
     private BufferedReader mReader;
     private int mBufferStart;
     private int mBufferLength;
 
-
-    BookText(Book book) {
-        mPath = book.getPath();
-    }
-
-    void init(Context context, int position) throws IOException {
+    BookText(InputStream stream, int position) throws IOException {
         if (mTextBuffer == null) {
-            mReader = getReader(context);
+            mReader = getReader(mStream = stream);
 
             mTextBuffer = new StringBuffer();
 
@@ -85,13 +76,9 @@ public class BookText implements Closeable {
         }
     }
 
-    private BufferedReader getReader(Context context) throws FileNotFoundException {
-        InputStream stream = context.getContentResolver().openInputStream(Uri.parse(mPath));
-        if (stream != null) {
-            InputStreamReader isReader = new InputStreamReader(stream);
-            return new BufferedReader(isReader);
-        }
-        return null;
+    private BufferedReader getReader(InputStream stream) {
+        InputStreamReader isReader = new InputStreamReader(stream);
+        return new BufferedReader(isReader);
     }
 
     public void reset(Context context) {

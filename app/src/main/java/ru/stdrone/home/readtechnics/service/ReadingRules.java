@@ -1,7 +1,5 @@
 package ru.stdrone.home.readtechnics.service;
 
-import android.content.Context;
-
 import ru.stdrone.home.readtechnics.model.Settings;
 import ru.stdrone.home.readtechnics.model.StatisticStorage;
 
@@ -12,8 +10,8 @@ public class ReadingRules {
 
     private Settings mSettings;
 
-    public ReadingRules(Context context) {
-        mSettings = new Settings(context);
+    public ReadingRules(Settings settings) {
+        mSettings = settings;
     }
 
     public boolean CheckSentence(StatisticStorage statistics) {

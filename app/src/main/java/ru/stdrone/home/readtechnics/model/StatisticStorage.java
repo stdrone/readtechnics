@@ -1,7 +1,5 @@
 package ru.stdrone.home.readtechnics.model;
 
-import android.content.SharedPreferences;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -9,22 +7,18 @@ import java.lang.reflect.Type;
 import java.util.Date;
 
 public class StatisticStorage implements Cloneable {
-    private static final String STATISTIC = "STATISTIC";
     private int mWords = 0, mSentences = 0, mSeconds = 0;
     private Date mStart, mEnd;
 
-    static public StatisticStorage fromPreferences(SharedPreferences preferences) {
-        StatisticStorage statistic;
-        if (preferences.contains(STATISTIC)) {
-            String data = preferences.getString(STATISTIC, "");
+    static public StatisticStorage Deserialize(String storage) {
+        if (storage == null) {
+            return new StatisticStorage();
+        } else {
             Type type = new TypeToken<StatisticStorage>() {
             }.getType();
 
-            statistic = new Gson().fromJson(data, type);
-        } else {
-            statistic = new StatisticStorage();
+            return new Gson().fromJson(storage, type);
         }
-        return statistic;
     }
 
     public StatisticStorage clone() throws CloneNotSupportedException {
@@ -68,10 +62,8 @@ public class StatisticStorage implements Cloneable {
         }
     }
 
-    public void store(SharedPreferences preferences) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(STATISTIC, new Gson().toJson(this));
-        editor.apply();
+    public String Serialize() {
+        return new Gson().toJson(this);
     }
 
     public int getWords() {

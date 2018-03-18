@@ -1,7 +1,5 @@
 package ru.stdrone.home.readtechnics.service;
 
-import android.content.Context;
-
 import ru.stdrone.home.readtechnics.model.StatisticStorage;
 
 public class StatisticCollector {
@@ -11,8 +9,8 @@ public class StatisticCollector {
     static StatisticCollector _instance;
     private StatisticStorage mTotal, mSession, mSentence;
 
-    public StatisticCollector(Context context) {
-        mTotal = StatisticStorage.fromPreferences(context.getSharedPreferences(STATISTIC_TOTAL, Context.MODE_PRIVATE));
+    public StatisticCollector(StatisticStorage totalStat) {
+        mTotal = totalStat;
         mSentence = new StatisticStorage();
         mSession = new StatisticStorage();
     }
@@ -23,10 +21,9 @@ public class StatisticCollector {
         mSentence.incWords();
     }
 
-    public void store(Context context) {
-        context.getSharedPreferences(STATISTIC_TOTAL, Context.MODE_PRIVATE);
+    public StatisticStorage getTotal() {
+        return mTotal;
     }
-
 
     public StatisticStorage endSentence() {
         mTotal.incSentences();

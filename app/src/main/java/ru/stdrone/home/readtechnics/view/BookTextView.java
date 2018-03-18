@@ -14,7 +14,6 @@ import android.widget.ScrollView;
 
 import java.io.IOException;
 
-import ru.stdrone.home.readtechnics.model.Book;
 import ru.stdrone.home.readtechnics.model.BookReader;
 import ru.stdrone.home.readtechnics.service.SpeechListener;
 
@@ -27,7 +26,7 @@ public class BookTextView extends AppCompatTextView implements SpeechListener.Li
     private String mLastTextColor = "#000000";
 
     private BookReader mBookReader;
-    private int mCurrentLine = 0;
+    private ScrollRunnable mScroller;
 
     public BookTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -49,6 +48,8 @@ public class BookTextView extends AppCompatTextView implements SpeechListener.Li
         params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
         setLayoutParams(params);
+
+        mScroller = new ScrollRunnable(getLayout(), (View) this.getParent());
     }
 
     @Override
@@ -71,48 +72,18 @@ public class BookTextView extends AppCompatTextView implements SpeechListener.Li
         }
     }
 
-    public void setBookText(BookReader bookReader) throws IOException {
+    public BookReader getBookReader() {
+        return mBookReader;
+    }
+
+    public void setBookReader(BookReader bookReader) throws IOException {
         mBookReader = bookReader;
         setCurrentText();
     }
 
-    public void setBook(Book book) {
-        try {
-            Context context = this.getContext();
-            BookReader text = new BookReader(context, book);
-            text.init(context);
-            setBookText(text);
-        } catch (IOException e) {
-            setText(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
     public void ScrollToCurrent() {
-
-        post(new Runnable() {
-            @Override
-            public void run() {
-                if (mBookReader != null) {
-                    Layout layout = getLayout();
-                    if (layout != null) {
-                        int lineHeight = layout.getLineTop(2) - layout.getLineTop(1);
-                        int viewHeight = ((View) getParent()).getHeight();
-                        int lineCount = viewHeight / lineHeight;
-                        int position = mBookReader.getPosition();
-                        int line = layout.getLineForOffset(position) - lineCount / 2;
-                        line = Math.min(getLayout().getLineCount(), Math.max(0, line));
-
-                        int y = getLayout().getLineTop(line);
-
-                        if (mCurrentLine != line) {
-                            ((ScrollView) getParent()).smoothScrollTo(0, y);
-                            mCurrentLine = line;
-                        }
-                    }
-                }
-            }
-        });
+        mScroller.setNewPosition(mBookReader.getPositionInView());
+        post(mScroller);
     }
 
     @Override
@@ -124,6 +95,43 @@ public class BookTextView extends AppCompatTextView implements SpeechListener.Li
             } catch (IOException e) {
                 e.printStackTrace();
                 setText(e.getMessage());
+            }
+        }
+    }
+
+    class ScrollRunnable implements Runnable {
+        int mNewPosition, mCurrentPosition;
+
+        Layout mLayout;
+        View mParent;
+
+        ScrollRunnable(Layout layout, View parent) {
+            mNewPosition = 0;
+            mCurrentPosition = 0;
+            mParent = parent;
+            mLayout = layout;
+        }
+
+        void setNewPosition(int newPosition) {
+            mNewPosition = newPosition;
+        }
+
+        @Override
+        public void run() {
+            Layout layout = getLayout();
+            if (layout != null) {
+                int lineHeight = layout.getLineTop(2) - layout.getLineTop(1);
+                int viewHeight = mParent.getHeight();
+                int lineCount = viewHeight / lineHeight;
+                int newPosition = layout.getLineForOffset(mNewPosition) - lineCount / 2;
+                newPosition = Math.min(getLayout().getLineCount(), Math.max(0, newPosition));
+
+                int y = getLayout().getLineTop(newPosition);
+
+                if (mCurrentPosition != newPosition) {
+                    ((ScrollView) getParent()).smoothScrollTo(0, y);
+                    mCurrentPosition = newPosition;
+                }
             }
         }
     }

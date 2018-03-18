@@ -2,6 +2,8 @@ package ru.stdrone.home.readtechnics;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,14 +16,24 @@ import android.widget.CompoundButton;
 import android.widget.ScrollView;
 import android.widget.ToggleButton;
 
+import java.io.IOException;
+
 import ru.stdrone.home.readtechnics.model.Book;
+import ru.stdrone.home.readtechnics.model.BookReader;
 import ru.stdrone.home.readtechnics.model.BookText;
+import ru.stdrone.home.readtechnics.model.Settings;
+import ru.stdrone.home.readtechnics.model.StatisticStorage;
+import ru.stdrone.home.readtechnics.service.ReadingRules;
 import ru.stdrone.home.readtechnics.service.SpeechListener;
+import ru.stdrone.home.readtechnics.service.StatisticCollector;
 import ru.stdrone.home.readtechnics.view.BookTextView;
 
 public class BookReadingActivity extends AppCompatActivity implements View.OnTouchListener, SpeechListener.EventObserver {
 
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
+    private static final String STATISTIC = "STATISTIC";
+
+
     BookText bookText;
 
     BookTextView mBookTextView;
@@ -35,7 +47,15 @@ public class BookReadingActivity extends AppCompatActivity implements View.OnTou
 
         Book book = (Book) getIntent().getSerializableExtra(Book.EXTRA_BOOK);
         mBookTextView = findViewById(R.id.book_text);
-        mBookTextView.setBook(book);
+
+        try {
+            int position = getPreferences(MODE_PRIVATE).getInt(book.getPath(), 0);
+            Settings settings = new Settings(this);
+            StatisticCollector collector = new StatisticCollector(StatisticStorage.Deserialize(getPreferences(Context.MODE_PRIVATE).getString(STATISTIC, null)));
+            mBookTextView.setBookReader(new BookReader(position, collector, new ReadingRules(settings)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         ScrollView scrollView = findViewById(R.id.scroll_text);
         scrollView.setOnTouchListener(this);
@@ -90,8 +110,18 @@ public class BookReadingActivity extends AppCompatActivity implements View.OnTou
 
     @Override
     protected void onPause() {
-        super.onPause();
         mListner.reset(false);
+
+        final SharedPreferences.Editor edit = getPreferences(MODE_PRIVATE).edit();
+
+        edit.putString(STATISTIC, mBookTextView.getBookReader().getStatistic().getTotal().Serialize());
+
+        Book book = (Book) getIntent().getSerializableExtra(Book.EXTRA_BOOK);
+        edit.putInt(book.getPath(), mBookTextView.getBookReader().getPosition());
+
+        edit.apply();
+
+        super.onPause();
     }
 
 }
